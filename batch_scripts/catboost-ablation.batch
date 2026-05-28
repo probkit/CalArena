@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# catboost-ablation.batch
+#
+
+#SBATCH --job-name=catboost-ablation
+#SBATCH --partition=cpu_homogen
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=10G
+#SBATCH --time=02:00:00
+#SBATCH --output=logs/%x_%A_%a.out
+#SBATCH --array=0-3
+
+source /home/$USER/.bashrc
+conda activate calarena
+
+CALIBRATORS=(
+  "CB" "CB-tiny" "CB-monotone" "CB-tiny-monotone"
+)
+
+cd $HOME/CalArena
+
+python run_benchmark.py --benchmark tabrepo-binary --calibrator "${CALIBRATORS[$SLURM_ARRAY_TASK_ID]}"

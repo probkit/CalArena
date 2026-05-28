@@ -1,0 +1,27 @@
+#!/bin/bash
+#
+# tabrepo-multiclass.batch
+#
+
+#SBATCH --job-name=tabrepo-multiclass
+#SBATCH --partition=cpu_homogen
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=20G
+#SBATCH --time=05:00:00
+#SBATCH --output=logs/%x_%A_%a.out
+#SBATCH --array=0-18
+
+source /home/$USER/.bashrc
+conda activate calarena
+
+CALIBRATORS=(
+  "Base-model"
+  "Hist-uniform" "Hist-quantile" "Isotonic" "CIR" "Venn-Abers" "BBQ" "Spline"
+  "TS" "ETS" "VS" "SVS" "MS" "SMS" "Dirichlet" "Kernel"
+  "XGBoost" "LightGBM" "CatBoost"
+)
+
+cd $HOME/CalArena
+
+python run_benchmark.py --benchmark tabrepo-multiclass --calibrator "${CALIBRATORS[$SLURM_ARRAY_TASK_ID]}"

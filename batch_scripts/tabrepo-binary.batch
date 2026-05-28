@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+# tabrepo-binary.batch
+#
+
+#SBATCH --job-name=tabrepo-binary
+#SBATCH --partition=cpu_homogen
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=10G
+#SBATCH --time=05:00:00
+#SBATCH --output=logs/%x_%A_%a.out
+#SBATCH --array=0-19
+
+source /home/$USER/.bashrc
+conda activate calarena
+
+CALIBRATORS=(
+  "Base-model"
+  "Hist-uniform" "Hist-quantile" "Scaling-Binning" "BBQ"
+  "Isotonic" "CIR" "Venn-Abers"
+  "TS" "ETS" "Platt-probs" "Platt-logits" "Quadratic" "Beta"
+  "Spline" "CDF-Spline" "Kernel"
+  "XGBoost" "LightGBM" "CatBoost"
+)
+
+cd $HOME/CalArena
+
+python run_benchmark.py --benchmark tabrepo-binary --calibrator "${CALIBRATORS[$SLURM_ARRAY_TASK_ID]}"

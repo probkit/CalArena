@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# imagenet-multiclass.batch
+#
+
+#SBATCH --job-name=imagenet-multiclass
+#SBATCH --partition=cpu_homogen
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=20G
+#SBATCH --time=01:00:00
+#SBATCH --output=logs/%x_%A_%a.out
+#SBATCH --array=0-8
+
+source /home/$USER/.bashrc
+conda activate calarena
+
+CALIBRATORS=(
+  "Base-model"
+  "Hist-uniform" "Hist-quantile" "Isotonic" "CIR"
+  "TS" "ETS" "VS" "SVS"
+)
+
+cd $HOME/CalArena
+
+python run_benchmark.py --benchmark imagenet-multiclass --calibrator "${CALIBRATORS[$SLURM_ARRAY_TASK_ID]}"

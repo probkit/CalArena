@@ -1,0 +1,14 @@
+dataset,model,cal_size,test_size
+c10,densenet40,5000,10000
+c10,lenet5,5000,10000
+c10,resnet_wide32,5000,10000
+c10,resnet110,5000,10000
+c10,resnet110_SD,5000,10000
+breast,beit,78,156
+breast,convnext,78,156
+breast,resnet50,78,156
+breast,vit,78,156
+pneumonia,beit,524,624
+pneumonia,convnext,524,624
+pneumonia,resnet50,524,624
+pneumonia,vit,524,624

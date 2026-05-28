@@ -1,0 +1,5 @@
+__pycache__/
+cv_data/
+calibration_benchmarks/*.h5
+logs/
+.DS_Store
