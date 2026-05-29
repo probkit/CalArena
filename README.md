@@ -7,6 +7,7 @@ hundreds of (dataset, model) pairs spanning classical tabular models, state-of-t
 tabular foundation models, and computer vision networks. All calibrator implementations
 are provided by the [probmetrics](https://github.com/probkit/probmetrics) package.
 
+📄 Read the paper here: [CalArena: A Large-Scale Post-Hoc Calibration Benchmark](https://arxiv.org/abs/2605.30188)
 
 ## Leaderboards
 
@@ -342,10 +343,11 @@ All built-in calibrators live in the [probmetrics](https://github.com/probkit/pr
 ## Citation
 
 ```bibtex
-@inproceedings{calarena2026,
+@article{calarena2026,
   title     = {CalArena: A Large-Scale Post-Hoc Calibration Benchmark},
   author    = {Eug{\`e}ne Berta and David Holzm{\"u}ller and Francis Bach and Michael I. Jordan},
-  booktitle = {preprint},
+  journal   = {arXiv preprint arXiv:2605.30188},
   year      = {2026},
+  url       = {https://arxiv.org/abs/2605.30188},
 }
 ```
