@@ -37,91 +37,107 @@ CalArena/
 │   ├── generate_tabrepo_benchmarks.py
 │   ├── generate_tabarena_benchmarks.py
 │   ├── generate_cv_benchmarks.py
-│   ├── cv-binary-experiments.csv             # CV dataset/model index (binary)
-│   ├── cv-multiclass-experiments.csv         # CV dataset/model index (multiclass)
-│   └── imagenet-multiclass-experiments.csv.  # ImageNet model index
+│   └── {benchmark}-experiments.csv  # Benchmark experiments index
 ├── batch_scripts/                # SLURM job scripts for cluster execution
 ├── results/                      # Benchmark results (one CSV per calibrator)
 │   └── {benchmark}/{calibrator}.csv
 └── figures/                      # Paper figures (PDF)
 ```
 
-> **Note:** The generated HDF5 files (`calibration_benchmarks/*.h5`) are listed in `.gitignore` due to their size (up to ~1.4 GB for ImageNet).
+> **Note:** The HDF5 files storing benchmark data (`calibration_benchmarks/*.h5`) are listed in `.gitignore` due to their size (~1.7 GB in total).
 > Download them from [HuggingFace](https://huggingface.co/datasets/probkit/CalArena).
-> You can also run the generation scripts once to produce them locally; see below.
 
 
 ## Benchmarks
 
 CalArena includes **7 benchmarks** across three data modalities:
 
-| Benchmark | Modality | Base models | Datasets |
-|---|---|---|---|
-| `tabrepo-binary` | Binary | 8 classical tabular models | 104 tabular datasets |
-| `tabrepo-multiclass` | Multiclass | 8 classical tabular models | 65 tabular datasets |
-| `tabarena-binary` | Binary | 11 modern tabular models | 30 tabular datasets |
-| `tabarena-multiclass` | Multiclass | 11 modern tabular models | 8 tabular datasets |
-| `cv-binary` | Binary | 9 CV models | CIFAR-10 (Animal vs Machine), Breast, Pneumonia |
-| `cv-multiclass` | Multiclass | 10 CV models | CIFAR-10/100, Birds, SVHN, Derma, OCT |
-| `imagenet-multiclass` | Multiclass (1000 classes) | 8 CV models | ImageNet |
+| Benchmark | Problem type | Base models | Datasets | #Experiments |
+|---|---|---|---|---|
+| `tabrepo-binary` | Binary | 8 classical tabular models | 104 tabular datasets | 832 |
+| `tabarena-binary` | Binary | 11 advanced tabular models | 30 tabular datasets | 314 |
+| `cv-binary` | Binary | 9 deep CV models | CIFAR-10 (Animal vs Machine), Breast, Pneumonia | 13 |
+| `tabrepo-multiclass` | Multiclass | 8 classical tabular models | 65 tabular datasets | 520 |
+| `tabarena-multiclass` | Multiclass | 11 modern tabular models | 8 tabular datasets | 84 |
+| `cv-multiclass` | Multiclass | 10 deep CV models | CIFAR-10/100, Birds, SVHN, Derma, OCT | 20 |
+| `imagenet-multiclass` | Large scale multiclass | 8 deep CV models | ImageNet | 8 |
 
-Each benchmark is stored as a single HDF5 file (`calibration_benchmarks/{benchmark}.h5`) with the hierarchy `{dataset}/{model}/` → `{probas_cal, labels_cal, probas_test, labels_test}`, plus a companion `{benchmark}-experiments.csv` listing dataset, model, calibration size, test size, and number of classes.
+Each benchmark is stored as a single HDF5 file (`calibration_benchmarks/{benchmark}.h5`) with the hierarchy `{dataset}/{model}/` → `{probas_cal, labels_cal, probas_test, labels_test}`, plus a companion `{benchmark}-experiments.csv` experiments index file listing dataset, model, calibration set size, test set size, number of classes...
 
 **TabRepo** base models: CatBoost, ExtraTrees, LightGBM, LinearModel, NeuralNetFastAI, NeuralNetTorch, RandomForest, XGBoost.
 
-**TabArena** base models (≥ 1300 ELO on [TabArena leaderboard](https://huggingface.co/spaces/TabArena/leaderboard), as of April 1 2026): TabPFN-v2.6, TabICLv2, RealTabPFN-v2.5, TabICL\_GPU, LimiX\_GPU, TabM\_GPU, RealMLP\_GPU, BetaTabPFN\_GPU, ModernNCA\_GPU, Mitra\_GPU, TabDPT\_GPU.
+**TabArena** base models (≥ 1300 ELO on [TabArena leaderboard](https://huggingface.co/spaces/TabArena/leaderboard), as of April 1 2026, v0.1.3.1): TabPFN-v2.6, TabICLv2, RealTabPFN-v2.5, TabICL\_GPU, LimiX\_GPU, TabM\_GPU, RealMLP\_GPU, BetaTabPFN\_GPU, ModernNCA\_GPU, Mitra\_GPU, TabDPT\_GPU.
 
 
 ## Calibrators
 
 ### Binary (20 methods)
 
-| Name | Method |
-|---|---|
-| `Base-model` | No calibration (raw model probabilities) |
-| `Hist-uniform` | Histogram binning — uniform bins |
-| `Hist-quantile` | Histogram binning — quantile bins |
-| `Scaling-Binning` | Platt scaling + histogram binning |
-| `BBQ` | Bayesian Binning into Quantiles |
-| `Isotonic` | Isotonic regression |
-| `CIR` | Centered Isotonic Regression |
-| `Venn-Abers` | Venn-Abers predictor |
-| `TS` | Temperature Scaling |
-| `ETS` | Ensemble Temperature Scaling |
-| `Platt-probs` | Platt Scaling on top-class probabilities |
-| `Platt-logits` | Platt Scaling on top-class logits |
-| `Quadratic` | Quadratic logistic calibration |
-| `Beta` | Beta calibration |
-| `Spline` | MLI Spline |
-| `CDF-Spline` | Gupta Spline |
-| `Kernel` | Kernel calibration |
-| `XGBoost` | XGBoost calibrator |
-| `LightGBM` | LightGBM calibrator |
-| `CatBoost` | CatBoost calibrator |
+| Name | Method | Paper |
+|---|---|---|
+| `Base-model` | No calibration (raw model probabilities) | |
+| `Hist-uniform` | Histogram binning with fixed sized bins (10 bins) | [1] |
+| `Hist-quantile` | Histogram binning with fixed number of points per bin (10 bins) | [1] |
+| `Scaling-Binning` | Platt scaling + histogram binning | [2] |
+| `BBQ` | Bayesian Binning into Quantiles | [3] |
+| `Isotonic` | Isotonic regression | [4] |
+| `CIR` | Centered Isotonic Regression | [5] |
+| `Venn-Abers` | Venn-Abers predictor | [6] |
+| `TS` | Temperature Scaling | [7] |
+| `ETS` | Ensemble Temperature Scaling | [8] |
+| `Platt-probs` | Platt Scaling on top-class probabilities | [9] |
+| `Platt-logits` | Platt Scaling on top-class logits | [9] |
+| `Quadratic` | Quadratic logistic calibration | [10] |
+| `Beta` | Beta calibration | [11] |
+| `Spline` | MLI Spline | [12] |
+| `CDF-Spline` | Gupta Spline | [13] |
+| `Kernel` | Kernel calibration | [14] |
+| `XGBoost` | XGBoost calibrator | |
+| `LightGBM` | LightGBM calibrator | |
+| `CatBoost` | CatBoost calibrator | |
 
 ### Multiclass (19 methods)
 
-| Name | Method |
-|---|---|
-| `Base-model` | No calibration |
-| `Hist-uniform` | Histogram binning — uniform bins (OvR) |
-| `Hist-quantile` | Histogram binning — quantile bins (OvR) |
-| `Isotonic` | Isotonic regression (OvR) |
-| `CIR` | Centered Isotonic Regression (OvR) |
-| `Venn-Abers` | Venn-Abers predictor (OvR) |
-| `BBQ` | Bayesian Binning into Quantiles (OvR) |
-| `Spline` | MLI Spline (OvR) |
-| `TS` | Temperature Scaling |
-| `ETS` | Ensemble Temperature Scaling |
-| `VS` | Vector Scaling |
-| `SVS` | Scalar Vector Scaling |
-| `MS` | Matrix Scaling |
-| `SMS` | Scalar Matrix Scaling |
-| `Dirichlet` | Dirichlet calibration |
-| `Kernel` | Kernel calibration |
-| `XGBoost` | XGBoost calibrator |
-| `LightGBM` | LightGBM calibrator |
-| `CatBoost` | CatBoost calibrator |
+| Name | Method | Paper |
+|---|---|---|
+| `Base-model` | No calibration | |
+| `Hist-uniform` | Histogram binning — uniform bins (OvR) | |
+| `Hist-quantile` | Histogram binning — quantile bins (OvR) | |
+| `Isotonic` | Isotonic regression (OvR) | |
+| `CIR` | Centered Isotonic Regression (OvR) | |
+| `Venn-Abers` | Venn-Abers predictor (OvR) | |
+| `BBQ` | Bayesian Binning into Quantiles (OvR) | |
+| `Spline` | MLI Spline (OvR) | |
+| `TS` | Temperature Scaling | [7] |
+| `ETS` | Ensemble Temperature Scaling | [8] |
+| `VS` | Vector Scaling | [7] |
+| `SVS` | Structured Vector Scaling | [10] |
+| `MS` | Matrix Scaling | [7] |
+| `SMS` | Structured Matrix Scaling | [10] |
+| `Dirichlet` | Dirichlet calibration | [15] |
+| `Kernel` | Kernel calibration | [14] |
+| `XGBoost` | XGBoost calibrator | |
+| `LightGBM` | LightGBM calibrator | |
+| `CatBoost` | CatBoost calibrator | |
+
+
+[1] [Obtaining calibrated probability estimates
+from decision trees and naive Bayesian classifiers](https://cseweb.ucsd.edu/~elkan/calibrated.pdf)  
+[2] [Verified Uncertainty Calibration](https://proceedings.neurips.cc/paper_files/paper/2019/hash/f8c0c968632845cd133308b1a494967f-Abstract.html)  
+[3] [Obtaining Well Calibrated Probabilities Using Bayesian Binning](https://pubmed.ncbi.nlm.nih.gov/25927013/)  
+[4] [Transforming Classifier Scores into Accurate Multiclass Probability Estimates](https://dl.acm.org/doi/pdf/10.1145/775047.775151)  
+[5] [Centered Isotonic Regression: Point and Interval Estimation for Dose–Response Studies](https://www.tandfonline.com/doi/full/10.1080/19466315.2017.1286256)  
+[6] [Large-scale probabilistic predictors with and without
+guarantees of validity](https://proceedings.neurips.cc/paper/2015/file/a9a1d5317a33ae8cef33961c34144f84-Paper.pdf)  
+[7] []()  
+[8] []()  
+[9] []()  
+[10] []()  
+[11] []()  
+[12] []()  
+[13] []()  
+[14] []()  
+[15] []()  
 
 
 ## Metrics
