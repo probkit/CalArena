@@ -48,7 +48,7 @@ CalArena/
 > Download them from [HuggingFace](https://huggingface.co/datasets/probkit/CalArena).
 
 
-## Benchmarks
+## Benchmarks overview
 
 CalArena includes **7 benchmarks** across three data modalities:
 
@@ -62,14 +62,18 @@ CalArena includes **7 benchmarks** across three data modalities:
 | `cv-multiclass` | Multiclass | 10 deep CV models | CIFAR-10/100, Birds, SVHN, Derma, OCT | 20 |
 | `imagenet-multiclass` | Large scale multiclass | 8 deep CV models | ImageNet | 8 |
 
-Each benchmark is stored as a single HDF5 file (`calibration_benchmarks/{benchmark}.h5`) with the hierarchy `{dataset}/{model}/` → `{probas_cal, labels_cal, probas_test, labels_test}`, plus a companion `{benchmark}-experiments.csv` experiments index file listing dataset, model, calibration set size, test set size, number of classes...
+Each benchmark is stored as
+- a single HDF5 file (`calibration_benchmarks/{benchmark}.h5`) with the hierarchy `{dataset}/{model}/` → `{probas_cal, labels_cal, probas_test, labels_test}`
+- a companion `{benchmark}-experiments.csv` experiments index file listing dataset, model, calibration set size, test set size, number of classes
 
 **TabRepo** base models: CatBoost, ExtraTrees, LightGBM, LinearModel, NeuralNetFastAI, NeuralNetTorch, RandomForest, XGBoost.
 
 **TabArena** base models (≥ 1300 ELO on [TabArena leaderboard](https://huggingface.co/spaces/TabArena/leaderboard), as of April 1 2026, v0.1.3.1): TabPFN-v2.6, TabICLv2, RealTabPFN-v2.5, TabICL\_GPU, LimiX\_GPU, TabM\_GPU, RealMLP\_GPU, BetaTabPFN\_GPU, ModernNCA\_GPU, Mitra\_GPU, TabDPT\_GPU.
 
 
-## Calibrators
+## Calibrators overview
+
+💻 Implementations for every calibrator listed can be found in the [probmetrics](https://github.com/probkit/probmetrics) package.
 
 ### Binary (20 methods)
 
@@ -89,25 +93,25 @@ Each benchmark is stored as a single HDF5 file (`calibration_benchmarks/{benchma
 | `Platt-logits` | Platt Scaling on top-class logits | [9] |
 | `Quadratic` | Quadratic logistic calibration | [10] |
 | `Beta` | Beta calibration | [11] |
-| `Spline` | MLI Spline | [12] |
-| `CDF-Spline` | Gupta Spline | [13] |
+| `Spline` | Spline based calibration | [12] |
+| `CDF-Spline` | Spline based calibration on the CDF | [13] |
 | `Kernel` | Kernel calibration | [14] |
-| `XGBoost` | XGBoost calibrator | |
-| `LightGBM` | LightGBM calibrator | |
-| `CatBoost` | CatBoost calibrator | |
+| `XGBoost` | Post-hoc calibration using a binary classifier | |
+| `LightGBM` | Post-hoc calibration using a binary classifier | |
+| `CatBoost` | Post-hoc calibration using a binary classifier | |
 
 ### Multiclass (19 methods)
 
 | Name | Method | Paper |
 |---|---|---|
 | `Base-model` | No calibration | |
-| `Hist-uniform` | Histogram binning — uniform bins (OvR) | |
-| `Hist-quantile` | Histogram binning — quantile bins (OvR) | |
-| `Isotonic` | Isotonic regression (OvR) | |
-| `CIR` | Centered Isotonic Regression (OvR) | |
-| `Venn-Abers` | Venn-Abers predictor (OvR) | |
-| `BBQ` | Bayesian Binning into Quantiles (OvR) | |
-| `Spline` | MLI Spline (OvR) | |
+| `Hist-uniform` | Histogram binning with fixed sized bins (OvR) | [1] |
+| `Hist-quantile` | Histogram binning with fixed number of points per bin (OvR) | [1] |
+| `BBQ` | Bayesian Binning into Quantiles (OvR) | [3] |
+| `Isotonic` | Isotonic regression (OvR) | [4] |
+| `CIR` | Centered Isotonic Regression (OvR) | [5] |
+| `Venn-Abers` | Venn-Abers predictor (OvR) | [6] |
+| `Spline` | Spline based calibration (OvR) | [12] |
 | `TS` | Temperature Scaling | [7] |
 | `ETS` | Ensemble Temperature Scaling | [8] |
 | `VS` | Vector Scaling | [7] |
@@ -116,10 +120,9 @@ Each benchmark is stored as a single HDF5 file (`calibration_benchmarks/{benchma
 | `SMS` | Structured Matrix Scaling | [10] |
 | `Dirichlet` | Dirichlet calibration | [15] |
 | `Kernel` | Kernel calibration | [14] |
-| `XGBoost` | XGBoost calibrator | |
-| `LightGBM` | LightGBM calibrator | |
-| `CatBoost` | CatBoost calibrator | |
-
+| `XGBoost` | Post-hoc calibration using a multiclass classifier | |
+| `LightGBM` | Post-hoc calibration using a multiclass classifier | |
+| `CatBoost` | Post-hoc calibration using a multiclass classifier | |
 
 [1] [Obtaining calibrated probability estimates
 from decision trees and naive Bayesian classifiers](https://cseweb.ucsd.edu/~elkan/calibrated.pdf)  
@@ -129,26 +132,19 @@ from decision trees and naive Bayesian classifiers](https://cseweb.ucsd.edu/~elk
 [5] [Centered Isotonic Regression: Point and Interval Estimation for Dose–Response Studies](https://www.tandfonline.com/doi/full/10.1080/19466315.2017.1286256)  
 [6] [Large-scale probabilistic predictors with and without
 guarantees of validity](https://proceedings.neurips.cc/paper/2015/file/a9a1d5317a33ae8cef33961c34144f84-Paper.pdf)  
-[7] []()  
-[8] []()  
-[9] []()  
-[10] []()  
-[11] []()  
-[12] []()  
-[13] []()  
-[14] []()  
-[15] []()  
-
-
-## Metrics
-
-- **Binary**: log-loss, Brier score, accuracy, ECE-15, Kuiper
-- **Multiclass**: log-loss, Brier score, accuracy, ECE-15
+[7] [On Calibration of Modern Neural Networks](https://proceedings.mlr.press/v70/guo17a.html)  
+[8] [Mix-n-Match : Ensemble and Compositional Methods for Uncertainty Calibration in Deep Learning](https://proceedings.mlr.press/v119/zhang20k.html)  
+[9] [Probabilistic outputs for support vector machines and comparisons to regularized likelihood methods](https://www.researchgate.net/profile/John-Platt-2/publication/2594015_Probabilistic_Outputs_for_Support_Vector_Machines_and_Comparisons_to_Regularized_Likelihood_Methods/links/004635154cff5262d6000000/Probabilistic-Outputs-for-Support-Vector-Machines-and-Comparisons-to-Regularized-Likelihood-Methods.pdf)  
+[10] [Structured Matrix Scaling for Multi-Class Calibration](https://arxiv.org/abs/2511.03685)  
+[11] [Beta calibration: a well-founded and easily implemented improvement on logistic calibration for binary classifiers](https://proceedings.mlr.press/v54/kull17a.html)  
+[12] [Spline-Based Probability Calibration](https://arxiv.org/abs/1809.07751)  
+[13] [Calibration of Neural Networks using Splines](https://openreview.net/forum?id=eQe8DEWNN2W)  
+[14] [Consistent and Asymptotically Unbiased Estimation of Proper
+Calibration Errors](https://proceedings.mlr.press/v238/popordanoska24a/popordanoska24a.pdf)  
+[15] [Beyond temperature scaling: Obtaining well-calibrated multi-class probabilities with Dirichlet calibration](https://proceedings.neurips.cc/paper/2019/hash/8ca01ea920679a0fe3728441494041b9-Abstract.html)  
 
 
 ## Installation
-
-Every post-hoc calibrator benchmarked is available in the [probmetrics](https://github.com/probkit/probmetrics) python package.
 
 To run the benchmark, you need to install probmetrics with extra dependencies:
 
@@ -168,22 +164,19 @@ pip install arena-rank # To compute Elo scores
 ```
 
 
-## Downloading or generating the benchmarks
+## Collecting benchmark data
 
 ### Downloading (recommended)
 
-The pre-generated benchmark files (HDF5 + experiment CSVs) are available on HuggingFace:
+The benchmark files (HDF5 + experiment CSVs) are available on HuggingFace:
 
 > **[https://huggingface.co/datasets/probkit/CalArena](https://huggingface.co/datasets/probkit/CalArena)**
 
 Download the files and place them under `calibration_benchmarks/`.
 
-### Generating the benchmarks from the original data sources
+### Generating the benchmarks from the original data sources (disk space hungry)
 
 For the sake of completeness, we provide the scripts that we ran to generate the benchmarks from the original data sources.
-
-**We strongly recommend using the files downloaded from HuggingFace as accessing model predictions from TabRepo and TabArena requires downloading hundred gigabytes of raw data locally.**
-
 Each script writes its output directly into `calibration_benchmarks/`, you only need to run these once.
 
 ```bash
@@ -192,11 +185,13 @@ python calibration_benchmarks/generate_tabarena_benchmarks.py # requires install
 python calibration_benchmarks/generate_cv_benchmarks.py # requires downloading the data from original sources
 ```
 
-**TabRepo note:** Model predictions (we use context `D244_F3_C1530_200`, ~120 GB total) are downloaded automatically on first run. Ensure a fast internet connection.
+⚠️ **We strongly recommend using the files downloaded from HuggingFace as accessing model predictions from TabRepo and TabArena requires downloading hundred gigabytes of raw data locally.**
 
-**TabArena note:** Model predictions (~60 GB total) are downloaded automatically on first run. Ensure a fast internet connection.
+**TabRepo data:** Model predictions (we use context `D244_F3_C1530_200`, ~120 GB total) are downloaded automatically on first run. Ensure a fast internet connection.
 
-**CV data note:** `generate_cv_benchmarks.py` reads raw logits from `cv_data/` (gitignored). Place the Markus pickle files under `cv_data/Markus/` and the Hekler safetensors files under `cv_data/Hekler/` before running. The experiment-list CSVs (`cv-binary-experiments.csv`, etc.) are already committed and serve as the index of which datasets and models to process.
+**TabArena data:** Model predictions (~60 GB total) are downloaded automatically on first run. Ensure a fast internet connection.
+
+**CV data:** `generate_cv_benchmarks.py` reads raw logits from `cv_data/` (gitignored). Place the Markus pickle files under `cv_data/Markus/` and the Hekler safetensors files under `cv_data/Hekler/` before running. The experiment-list CSVs (`cv-binary-experiments.csv`, etc.) are already committed and serve as the index of which datasets and models to process.
 
 
 ## Running the benchmarks
@@ -209,7 +204,7 @@ Once the HDF5 and CSV files are downloaded and stored under `calibration_benchma
 python run_benchmark.py --benchmark tabrepo-binary
 ```
 
-Results are saved to `results/{benchmark}/{calibrator}.csv` — one file per calibrator.
+Results are saved to `results/{benchmark}/{calibrator}.csv`, one file per calibrator.
 
 ### Run a single calibrator
 
@@ -231,7 +226,9 @@ Results are saved to `results/{benchmark}/{calibrator}.csv`.
 
 ## Cluster execution (SLURM)
 
-The recommended cluster strategy is to submit one job per calibrator so that runtimes are isolated. Ready-to-use SLURM scripts for each benchmark are in `batch_scripts/`. Before submitting, uncomment and adjust the `conda activate` line for your environment:
+The recommended cluster strategy is to submit one job per calibrator so that runtimes are isolated.
+Ready-to-use SLURM scripts for each benchmark are in `batch_scripts/`.
+Before submitting, uncomment and adjust the `conda activate` line for your environment:
 
 ```bash
 sbatch batch_scripts/tabrepo-binary.batch
@@ -243,7 +240,7 @@ Example script (abbreviated):
 #!/bin/bash
 #SBATCH --array=0-19
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=16G
+#SBATCH --mem=10G
 #SBATCH --time=05:00:00
 #SBATCH --output=logs/%x_%A_%a.out
 
@@ -256,6 +253,7 @@ CALIBRATORS=(
   "XGBoost" "LightGBM" "CatBoost"
 )
 
+source /home/$USER/.bashrc
 cd $HOME/CalArena
 
 python run_benchmark.py \
@@ -268,7 +266,7 @@ SLURM output logs are written to `logs/` (gitignored).
 
 ## Adding your own calibrator
 
-### Step 1 — Implement the calibrator
+### Step 1: Implement the calibrator
 
 A calibrator must expose two methods:
 
@@ -306,9 +304,9 @@ class MyCalibrator(Calibrator):
         ...
 ```
 
-Any object that satisfies `.fit()` / `.predict_proba()` works — inheriting from `Calibrator` is optional.
+However, any object that satisfies `.fit()` / `.predict_proba()` works, inheriting from `Calibrator` is optional but recommend for smooth integration into the library.
 
-### Step 2 — Register it in `custom_calibrators.py`
+### Step 2: Register it in `custom_calibrators.py`
 
 ```python
 from my_module import MyCalibrator
@@ -320,7 +318,7 @@ CUSTOM_CALIBRATORS = {
 
 The dictionary key is the **display name** used in plot legends and result filenames.
 
-### Step 3 — Run it
+### Step 3: Run it
 
 ```bash
 python run_benchmark.py --benchmark tabrepo-binary --calibrator MyCalibrator
@@ -331,7 +329,8 @@ Results are saved to `results/tabrepo-binary/MyCalibrator.csv`, exactly like a b
 
 ## Reproducing the paper figures
 
-All figures are generated by [`paper_figures.ipynb`](paper_figures.ipynb). Pre-generated PDFs are in `figures/`.
+All figures are generated by [`paper_figures.ipynb`](paper_figures.ipynb).
+Pre-generated PDFs are in `figures/`.
 
 Results are loaded via `load_benchmark_results()` from [`utils.py`](utils.py):
 
@@ -353,7 +352,8 @@ df = load_benchmark_results(
 
 ## Contributing a calibrator to `probmetrics`
 
-All built-in calibrators live in the [probmetrics](https://github.com/probkit/probmetrics) package. To contribute a new method and include it in the official benchmark, implement it there following the `Calibrator` interface and open a pull request.
+All built-in calibrators live in the [probmetrics](https://github.com/probkit/probmetrics) package.
+To contribute a new method and include it in the official benchmark, implement it there following the `Calibrator` interface and open a pull request.
 
 
 ## Citation
