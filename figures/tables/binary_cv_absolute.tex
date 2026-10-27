@@ -1,0 +1,26 @@
+\begin{tabular}{llllll}
+\toprule
+Method & $\phantom{-} 100 \times \Phi_\mathrm{Brier}$ & $\phantom{-} 100 \times \Phi_\mathrm{Logloss}$ & $\phantom{-} 100 \times \Phi_\mathrm{Kuiper}$ & $\phantom{-} 100 \times \Phi_\mathrm{ECE-15}$ & $\phantom{-} 100 \times \Phi_\mathrm{Accuracy}$ \\
+\midrule
+Venn-Abers & $\phantom{-}3.48$ {\tiny $\pm 1.65$} (\#1) & $\phantom{-}115.15$ {\tiny $\pm 61.72$} (\#1) & $\phantom{-}2.34$ {\tiny $\pm 1.60$} (\#4) & $\phantom{-}3.02$ {\tiny $\pm 2.25$} (\#9) & $\phantom{-}0.13$ {\tiny $\pm 0.88$} (\#8) \\
+Platt-logits & $\phantom{-}3.39$ {\tiny $\pm 1.53$} (\#2) & $\phantom{-}102.37$ {\tiny $\pm 56.64$} (\#10) & $\phantom{-}2.40$ {\tiny $\pm 1.42$} (\#2) & $\phantom{-}2.77$ {\tiny $\pm 1.82$} (\#13) & $\phantom{-}0.30$ {\tiny $\pm 0.38$} (\#4) \\
+CatBoost & $\phantom{-}3.28$ {\tiny $\pm 1.53$} (\#3) & $\phantom{-}114.09$ {\tiny $\pm 61.34$} (\#3) & $\phantom{-}2.34$ {\tiny $\pm 1.35$} (\#5) & $\phantom{-}3.37$ {\tiny $\pm 2.37$} (\#5) & $-0.18$ {\tiny $\pm 1.05$} (\#19) \\
+Quadratic & $\phantom{-}3.21$ {\tiny $\pm 1.46$} (\#4) & $\phantom{-}97.11$ {\tiny $\pm 59.64$} (\#12) & $\phantom{-}2.32$ {\tiny $\pm 1.44$} (\#7) & $\phantom{-}2.85$ {\tiny $\pm 1.83$} (\#12) & $\phantom{-}0.03$ {\tiny $\pm 0.55$} (\#12) \\
+XGBoost & $\phantom{-}3.18$ {\tiny $\pm 1.50$} (\#5) & $\phantom{-}114.26$ {\tiny $\pm 62.04$} (\#2) & $\phantom{-}2.19$ {\tiny $\pm 1.62$} (\#8) & $\phantom{-}3.05$ {\tiny $\pm 2.70$} (\#8) & $\phantom{-}0.08$ {\tiny $\pm 0.89$} (\#10) \\
+Beta & $\phantom{-}3.17$ {\tiny $\pm 1.50$} (\#6) & $\phantom{-}111.55$ {\tiny $\pm 61.33$} (\#6) & $\phantom{-}2.33$ {\tiny $\pm 1.28$} (\#6) & $\phantom{-}3.25$ {\tiny $\pm 2.19$} (\#6) & $\phantom{-}0.55$ {\tiny $\pm 0.49$} (\#2) \\
+LightGBM & $\phantom{-}3.06$ {\tiny $\pm 1.42$} (\#7) & $\phantom{-}113.75$ {\tiny $\pm 61.28$} (\#4) & $\phantom{-}2.48$ {\tiny $\pm 1.47$} (\#1) & $\phantom{-}3.63$ {\tiny $\pm 2.43$} (\#2) & $-0.15$ {\tiny $\pm 0.83$} (\#18) \\
+Isotonic & $\phantom{-}3.02$ {\tiny $\pm 1.37$} (\#8) & $-23.39$ {\tiny $\pm 89.15$} (\#18) & $\phantom{-}2.13$ {\tiny $\pm 1.23$} (\#9) & $\phantom{-}2.87$ {\tiny $\pm 1.93$} (\#11) & $\phantom{-}0.14$ {\tiny $\pm 0.82$} (\#7) \\
+Spline & $\phantom{-}2.85$ {\tiny $\pm 1.33$} (\#9) & $\phantom{-}74.12$ {\tiny $\pm 69.38$} (\#15) & $\phantom{-}2.01$ {\tiny $\pm 1.37$} (\#11) & $\phantom{-}2.74$ {\tiny $\pm 1.91$} (\#14) & $\phantom{-}0.01$ {\tiny $\pm 0.83$} (\#14) \\
+Scaling-Binning & $\phantom{-}2.84$ {\tiny $\pm 1.62$} (\#10) & $\phantom{-}112.37$ {\tiny $\pm 61.51$} (\#5) & $\phantom{-}1.91$ {\tiny $\pm 1.67$} (\#13) & $\phantom{-}3.14$ {\tiny $\pm 2.55$} (\#7) & $\phantom{-}0.41$ {\tiny $\pm 2.22$} (\#3) \\
+ETS & $\phantom{-}2.82$ {\tiny $\pm 1.40$} (\#11) & $\phantom{-}107.32$ {\tiny $\pm 59.53$} (\#8) & $\phantom{-}1.81$ {\tiny $\pm 1.47$} (\#15) & $\phantom{-}2.33$ {\tiny $\pm 1.82$} (\#16) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#15) \\
+TS & $\phantom{-}2.81$ {\tiny $\pm 1.45$} (\#12) & $\phantom{-}102.49$ {\tiny $\pm 56.46$} (\#9) & $\phantom{-}1.72$ {\tiny $\pm 1.41$} (\#16) & $\phantom{-}2.24$ {\tiny $\pm 1.84$} (\#17) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#15) \\
+CIR & $\phantom{-}2.60$ {\tiny $\pm 1.19$} (\#13) & $-37.54$ {\tiny $\pm 93.22$} (\#20) & $\phantom{-}1.67$ {\tiny $\pm 0.83$} (\#17) & $\phantom{-}2.16$ {\tiny $\pm 1.23$} (\#18) & $\phantom{-}0.20$ {\tiny $\pm 0.56$} (\#5) \\
+Hist-quantile & $\phantom{-}2.60$ {\tiny $\pm 1.42$} (\#14) & $-31.43$ {\tiny $\pm 103.86$} (\#19) & $\phantom{-}1.85$ {\tiny $\pm 1.32$} (\#14) & $\phantom{-}2.44$ {\tiny $\pm 1.81$} (\#15) & $\phantom{-}0.69$ {\tiny $\pm 1.65$} (\#1) \\
+CDF-Spline & $\phantom{-}1.73$ {\tiny $\pm 1.02$} (\#15) & $\phantom{-}84.17$ {\tiny $\pm nan$} (\#14) & $\phantom{-}1.99$ {\tiny $\pm 1.38$} (\#12) & $\phantom{-}2.99$ {\tiny $\pm 2.25$} (\#10) & $\phantom{-}0.14$ {\tiny $\pm 0.20$} (\#6) \\
+Platt-probs & $\phantom{-}1.08$ {\tiny $\pm 1.15$} (\#16) & $\phantom{-}109.52$ {\tiny $\pm 59.91$} (\#7) & $\phantom{-}1.58$ {\tiny $\pm 1.17$} (\#18) & $\phantom{-}3.59$ {\tiny $\pm 2.71$} (\#3) & $\phantom{-}0.09$ {\tiny $\pm 0.27$} (\#9) \\
+BBQ & $\phantom{-}0.69$ {\tiny $\pm 1.04$} (\#17) & $\phantom{-}96.03$ {\tiny $\pm 67.53$} (\#13) & $\phantom{-}2.37$ {\tiny $\pm 1.53$} (\#3) & $\phantom{-}3.95$ {\tiny $\pm 2.91$} (\#1) & $\phantom{-}0.02$ {\tiny $\pm 0.18$} (\#13) \\
+Kernel & $\phantom{-}0.60$ {\tiny $\pm 1.08$} (\#18) & $\phantom{-}100.59$ {\tiny $\pm 62.00$} (\#11) & $\phantom{-}1.06$ {\tiny $\pm 0.97$} (\#19) & $\phantom{-}2.11$ {\tiny $\pm 1.92$} (\#19) & $\phantom{-}0.06$ {\tiny $\pm 0.28$} (\#11) \\
+Hist-uniform & $\phantom{-}0.36$ {\tiny $\pm 1.23$} (\#19) & $\phantom{-}28.53$ {\tiny $\pm 56.97$} (\#16) & $\phantom{-}2.02$ {\tiny $\pm 1.46$} (\#10) & $\phantom{-}3.42$ {\tiny $\pm 2.80$} (\#4) & $-0.20$ {\tiny $\pm 0.33$} (\#20) \\
+Base-model & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#20) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#17) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#20) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#20) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#15) \\
+\bottomrule
+\end{tabular}

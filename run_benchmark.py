@@ -37,7 +37,6 @@ BINARY_CALIBRATORS = {
     "Isotonic": lambda: SklearnCalibrator(method="isotonic", cv="prefit"),
     "CIR": lambda: CenteredIsotonicRegressionCalibrator(),
     "Venn-Abers": lambda: BinaryVennAbersCalibrator(),
-    "ENIR": lambda: NetcalENIRCalibrator(),  # TODO: Very slow for large datasets.
 
     # Logistic-based methods
     "TS": lambda: TemperatureScalingCalibrator(),
@@ -82,6 +81,9 @@ MULTICLASS_CALIBRATORS = {
     "Venn-Abers": lambda: VennAbersCalibrator(),
     "BBQ": lambda: NetcalBBQCalibrator(),
     "Spline": lambda: MLISplineCalibrator(),
+    "Platt-logits": lambda: MulticlassOneVsRestCalibrator(
+        BinaryLogisticCalibrator(type="affine")
+    ),
 
     # Natively multiclass methods
     "TS": lambda: TemperatureScalingCalibrator(),

@@ -1,0 +1,26 @@
+\begin{tabular}{lllll}
+\toprule
+Method & $\phantom{-} 100 \times \Phi_\mathrm{Brier}$ & $\phantom{-} 100 \times \Phi_\mathrm{Logloss}$ & $\phantom{-} 100 \times \Phi_\mathrm{ECE-15}$ & $\phantom{-} 100 \times \Phi_\mathrm{Accuracy}$ \\
+\midrule
+Spline & $\phantom{-}0.03$ {\tiny $\pm 0.05$} (\#1) & $-0.30$ {\tiny $\pm 0.21$} (\#7) & $\phantom{-}0.11$ {\tiny $\pm 0.16$} (\#6) & $\phantom{-}0.02$ {\tiny $\pm 0.06$} (\#6) \\
+SMS & $\phantom{-}0.02$ {\tiny $\pm 0.04$} (\#2) & $\phantom{-}0.11$ {\tiny $\pm 0.09$} (\#2) & $\phantom{-}0.06$ {\tiny $\pm 0.14$} (\#10) & $\phantom{-}0.07$ {\tiny $\pm 0.10$} (\#4) \\
+SVS & $\phantom{-}0.02$ {\tiny $\pm 0.03$} (\#3) & $\phantom{-}0.06$ {\tiny $\pm 0.08$} (\#3) & $\phantom{-}0.06$ {\tiny $\pm 0.15$} (\#11) & $\phantom{-}0.07$ {\tiny $\pm 0.09$} (\#3) \\
+VS & $\phantom{-}0.00$ {\tiny $\pm 0.05$} (\#4) & $-2.59$ {\tiny $\pm 1.92$} (\#13) & $\phantom{-}0.07$ {\tiny $\pm 0.15$} (\#9) & $\phantom{-}0.10$ {\tiny $\pm 0.10$} (\#1) \\
+ETS & $\phantom{-}0.00$ {\tiny $\pm 0.04$} (\#5) & $\phantom{-}0.11$ {\tiny $\pm 0.08$} (\#1) & $\phantom{-}0.18$ {\tiny $\pm 0.15$} (\#5) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#7) \\
+Base-model & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#6) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#5) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#14) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#7) \\
+CIR & $-0.00$ {\tiny $\pm 0.06$} (\#7) & $-21.37$ {\tiny $\pm 6.23$} (\#18) & $\phantom{-}0.01$ {\tiny $\pm 0.17$} (\#13) & $-0.04$ {\tiny $\pm 0.09$} (\#11) \\
+Platt-logits & $-0.00$ {\tiny $\pm 0.03$} (\#8) & $-0.71$ {\tiny $\pm 0.65$} (\#8) & $\phantom{-}0.10$ {\tiny $\pm 0.16$} (\#7) & $\phantom{-}0.07$ {\tiny $\pm 0.08$} (\#2) \\
+Dirichlet & $-0.01$ {\tiny $\pm 0.05$} (\#9) & $-0.86$ {\tiny $\pm 0.60$} (\#11) & $-0.06$ {\tiny $\pm 0.16$} (\#15) & $\phantom{-}0.03$ {\tiny $\pm 0.12$} (\#5) \\
+TS & $-0.02$ {\tiny $\pm 0.03$} (\#10) & $\phantom{-}0.05$ {\tiny $\pm 0.05$} (\#4) & $\phantom{-}0.08$ {\tiny $\pm 0.13$} (\#8) & $\phantom{-}0.00$ {\tiny $\pm 0.00$} (\#7) \\
+Isotonic & $-0.06$ {\tiny $\pm 0.08$} (\#11) & $-27.65$ {\tiny $\pm 8.01$} (\#20) & $\phantom{-}0.20$ {\tiny $\pm 0.16$} (\#4) & $-0.07$ {\tiny $\pm 0.12$} (\#13) \\
+MS & $-0.06$ {\tiny $\pm 0.07$} (\#12) & $-3.18$ {\tiny $\pm 2.48$} (\#15) & $\phantom{-}0.05$ {\tiny $\pm 0.18$} (\#12) & $-0.01$ {\tiny $\pm 0.13$} (\#10) \\
+CatBoost & $-0.14$ {\tiny $\pm 0.11$} (\#13) & $-0.29$ {\tiny $\pm 0.18$} (\#6) & $\phantom{-}0.39$ {\tiny $\pm 0.17$} (\#1) & $-0.22$ {\tiny $\pm 0.14$} (\#16) \\
+BBQ & $-0.27$ {\tiny $\pm 0.13$} (\#14) & $-5.49$ {\tiny $\pm 2.22$} (\#16) & $-0.09$ {\tiny $\pm 0.29$} (\#16) & $-0.17$ {\tiny $\pm 0.14$} (\#15) \\
+Kernel & $-0.28$ {\tiny $\pm 0.18$} (\#15) & $-2.75$ {\tiny $\pm 0.85$} (\#14) & $-0.41$ {\tiny $\pm 0.34$} (\#17) & $-0.04$ {\tiny $\pm 0.10$} (\#12) \\
+Venn-Abers & $-0.30$ {\tiny $\pm 0.11$} (\#16) & $-0.81$ {\tiny $\pm 0.32$} (\#10) & $-0.98$ {\tiny $\pm 0.37$} (\#19) & $-0.11$ {\tiny $\pm 0.11$} (\#14) \\
+LightGBM & $-0.31$ {\tiny $\pm 0.14$} (\#17) & $-0.78$ {\tiny $\pm 0.29$} (\#9) & $\phantom{-}0.21$ {\tiny $\pm 0.20$} (\#2) & $-0.29$ {\tiny $\pm 0.18$} (\#19) \\
+XGBoost & $-0.40$ {\tiny $\pm 0.13$} (\#18) & $-1.82$ {\tiny $\pm 0.24$} (\#12) & $-1.31$ {\tiny $\pm 0.26$} (\#20) & $-0.24$ {\tiny $\pm 0.17$} (\#17) \\
+Hist-uniform & $-0.42$ {\tiny $\pm 0.15$} (\#19) & $-9.95$ {\tiny $\pm 3.83$} (\#17) & $\phantom{-}0.20$ {\tiny $\pm 0.18$} (\#3) & $-0.24$ {\tiny $\pm 0.12$} (\#18) \\
+Hist-quantile & $-1.81$ {\tiny $\pm 0.61$} (\#20) & $-26.54$ {\tiny $\pm 7.28$} (\#19) & $-0.91$ {\tiny $\pm 0.38$} (\#18) & $-1.29$ {\tiny $\pm 0.47$} (\#20) \\
+\bottomrule
+\end{tabular}

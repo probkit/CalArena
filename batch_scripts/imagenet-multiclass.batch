@@ -10,14 +10,14 @@
 #SBATCH --mem=20G
 #SBATCH --time=01:00:00
 #SBATCH --output=logs/%x_%A_%a.out
-#SBATCH --array=0-8
+#SBATCH --array=0-9
 
 source /home/$USER/.bashrc
 conda activate calarena
 
 CALIBRATORS=(
   "Base-model"
-  "Hist-uniform" "Hist-quantile" "Isotonic" "CIR"
+  "Hist-uniform" "Hist-quantile" "Isotonic" "CIR" "Platt-logits"
   "TS" "ETS" "VS" "SVS"
 )
 

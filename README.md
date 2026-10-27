@@ -2,7 +2,7 @@
 
 **A large-scale benchmark for post-hoc calibration of classification models.**
 
-CalArena systematically evaluates 20 binary and 19 multiclass calibration methods across
+CalArena systematically evaluates 20 binary and 20 multiclass calibration methods across
 hundreds of (dataset, model) pairs spanning classical tabular models, state-of-the-art
 tabular foundation models, and computer vision networks. All calibrator implementations
 are provided by the [probmetrics](https://github.com/probkit/probmetrics) package.
@@ -29,19 +29,21 @@ Methods are ranked based on the average winrate over the three benchmarks.
 
 ```
 CalArena/
+├── pyproject.toml                # Dependencies (pip install -e ".[analysis]")
 ├── run_benchmark.py              # Run calibration experiments
 ├── utils.py                      # Analysis utilities and plotting helpers
 ├── custom_calibrators.py         # Register your own calibrators
-├── paper_figures.ipynb           # Reproduce all paper figures
+├── make_figures.py               # Reproduce all paper figures and tables
 ├── calibration_benchmarks/       # Benchmark data and generation scripts
 │   ├── generate_tabrepo_benchmarks.py
 │   ├── generate_tabarena_benchmarks.py
 │   ├── generate_cv_benchmarks.py
 │   └── {benchmark}-experiments.csv  # Benchmark experiments index
 ├── batch_scripts/                # SLURM job scripts for cluster execution
+├── ablation_logits/              # Logits vs. probabilities ablation (paper appendix)
 ├── results/                      # Benchmark results (one CSV per calibrator)
 │   └── {benchmark}/{calibrator}.csv
-└── figures/                      # Paper figures (PDF)
+└── figures/                      # Paper figures (PDF) and tables (figures/tables/*.tex)
 ```
 
 > **Note:** The HDF5 files storing benchmark data (`calibration_benchmarks/*.h5`) are listed in `.gitignore` due to their size (~1.7 GB in total).
@@ -89,8 +91,8 @@ Each benchmark is stored as
 | `Venn-Abers` | Venn-Abers predictor | [6] |
 | `TS` | Temperature Scaling | [7] |
 | `ETS` | Ensemble Temperature Scaling | [8] |
-| `Platt-probs` | Platt Scaling on top-class probabilities | [9] |
-| `Platt-logits` | Platt Scaling on top-class logits | [9] |
+| `Platt-probs` | Platt Scaling on positive-class probabilities | [9] |
+| `Platt-logits` | Platt Scaling on positive-class logits | [9] |
 | `Quadratic` | Quadratic logistic calibration | [10] |
 | `Beta` | Beta calibration | [11] |
 | `Spline` | Spline based calibration | [12] |
@@ -100,7 +102,7 @@ Each benchmark is stored as
 | `LightGBM` | Post-hoc calibration using a binary classifier | |
 | `CatBoost` | Post-hoc calibration using a binary classifier | |
 
-### Multiclass (19 methods)
+### Multiclass (20 methods)
 
 | Name | Method | Paper |
 |---|---|---|
@@ -112,6 +114,7 @@ Each benchmark is stored as
 | `CIR` | Centered Isotonic Regression (OvR) | [5] |
 | `Venn-Abers` | Venn-Abers predictor (OvR) | [6] |
 | `Spline` | Spline based calibration (OvR) | [12] |
+| `Platt-logits` | Platt Scaling on logits (OvR) | [9] |
 | `TS` | Temperature Scaling | [7] |
 | `ETS` | Ensemble Temperature Scaling | [8] |
 | `VS` | Vector Scaling | [7] |
@@ -144,23 +147,24 @@ Calibration Errors](https://proceedings.mlr.press/v238/popordanoska24a/popordano
 [15] [Beyond temperature scaling: Obtaining well-calibrated multi-class probabilities with Dirichlet calibration](https://proceedings.neurips.cc/paper/2019/hash/8ca01ea920679a0fe3728441494041b9-Abstract.html)  
 
 
+## Metrics
+
+- **Binary**: log-loss, Brier score, accuracy, ECE-15, Kuiper
+- **Multiclass**: log-loss, Brier score, accuracy, ECE-15
+
+
 ## Installation
 
-To run the benchmark, you need to install probmetrics with extra dependencies:
+All dependencies are declared in [`pyproject.toml`](pyproject.toml). From the repository root:
 
 ```bash
-# "extra" and "dirichletcal" install other calibration package to support all
-# calibrators in the library.
-pip install 'probmetrics[extra,dirichletcal]'
+# Running the benchmark: probmetrics with all calibrator backends, h5py, ...
+# (Dirichlet calibration requires python >= 3.12)
+pip install -e .
 
-# To load the benchmark data, you also need h5py
-pip install h5py
-```
-
-For results analysis and plotting you need extra packages
-```bash
-pip install scikit-posthocs # Statistical analysis and CD diagrams
-pip install arena-rank # To compute Elo scores
+# Also install the results analysis and plotting dependencies
+# (scikit-posthocs, arena-rank, matplotlib)
+pip install -e ".[analysis]"
 ```
 
 
@@ -228,7 +232,7 @@ Results are saved to `results/{benchmark}/{calibrator}.csv`.
 
 The recommended cluster strategy is to submit one job per calibrator so that runtimes are isolated.
 Ready-to-use SLURM scripts for each benchmark are in `batch_scripts/`.
-Before submitting, uncomment and adjust the `conda activate` line for your environment:
+Before submitting, adjust the partition and the `conda activate` line for your environment:
 
 ```bash
 sbatch batch_scripts/tabrepo-binary.batch
@@ -248,7 +252,7 @@ CALIBRATORS=(
   "Base-model"
   "Hist-uniform" "Hist-quantile" "Scaling-Binning" "BBQ"
   "Isotonic" "CIR" "Venn-Abers"
-  "TS" "ETS" "Platt" "Affine" "Quadratic" "Beta"
+  "TS" "ETS" "Platt-probs" "Platt-logits" "Quadratic" "Beta"
   "Spline" "CDF-Spline" "Kernel"
   "XGBoost" "LightGBM" "CatBoost"
 )
@@ -304,7 +308,7 @@ class MyCalibrator(Calibrator):
         ...
 ```
 
-However, any object that satisfies `.fit()` / `.predict_proba()` works, inheriting from `Calibrator` is optional but recommend for smooth integration into the library.
+However, any object that satisfies `.fit()` / `.predict_proba()` works, inheriting from `Calibrator` is optional but recommended for smooth integration into the library.
 
 ### Step 2: Register it in `custom_calibrators.py`
 
@@ -329,8 +333,14 @@ Results are saved to `results/tabrepo-binary/MyCalibrator.csv`, exactly like a b
 
 ## Reproducing the paper figures
 
-All figures are generated by [`paper_figures.ipynb`](paper_figures.ipynb).
-Pre-generated PDFs are in `figures/`.
+All figures and tables of the paper are generated by [`make_figures.py`](make_figures.py) (requires a LaTeX installation for figure rendering):
+
+```bash
+python make_figures.py
+```
+
+Figures are saved as PDFs in `figures/` (plus the two PNG leaderboards shown in this README), and the absolute improvement tables of the appendix as LaTeX rows in `figures/tables/`, which the paper includes with `\input`.
+Bootstrap confidence intervals use a fixed seed, so the outputs are reproducible.
 
 Results are loaded via `load_benchmark_results()` from [`utils.py`](utils.py):
 
@@ -339,7 +349,7 @@ from utils import load_benchmark_results
 
 df = load_benchmark_results(
     benchmark_name="tabrepo-binary",
-    methods=["TS", "Platt", "Isotonic", "Base-model"],
+    methods=["TS", "Platt-logits", "Isotonic", "Base-model"],
 )
 ```
 
@@ -348,6 +358,13 @@ df = load_benchmark_results(
 - `compute_elo_scores()` — Bradley-Terry Elo ratings with bootstrap CIs
 - `compute_absolute_improvements()` — per-metric improvements over `Base-model`, LaTeX-formatted
 - `plot_leaderboard()`, `plot_grouped_leaderboards()`, `plot_cd_diagram()` — reproducing publication figures
+
+
+## Logits vs. probabilities ablation
+
+All calibrators in CalArena are fitted on predicted probabilities.
+The [`ablation_logits/`](ablation_logits/) folder contains everything needed to reproduce the ablation study from the paper's appendix, in which logit-based calibrators (TS, VS, MS) are instead fitted on raw logits or scaled logits for the computer vision benchmarks.
+See [`ablation_logits/README.md`](ablation_logits/README.md).
 
 
 ## Contributing a calibrator to `probmetrics`

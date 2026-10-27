@@ -1,0 +1,34 @@
+#!/bin/bash
+#
+# ablation.batch
+#
+# Logits vs. probabilities ablation: one job per (benchmark, calibrator, variant).
+# Run ablation_logits/generate_logits_benchmarks.py once before submitting.
+#
+
+#SBATCH --job-name=ablation-logits
+#SBATCH --partition=cpu_homogen
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=20G
+#SBATCH --time=05:00:00
+#SBATCH --output=logs/%x_%A_%a.out
+#SBATCH --array=0-9
+
+source /home/$USER/.bashrc
+conda activate calarena
+
+# Matrix scaling is too slow for ImageNet (1000 classes), as in the main benchmark.
+JOBS=(
+  "cv-multiclass TS logits" "cv-multiclass TS scaled-logits"
+  "cv-multiclass VS logits" "cv-multiclass VS scaled-logits"
+  "cv-multiclass MS logits" "cv-multiclass MS scaled-logits"
+  "imagenet-multiclass TS logits" "imagenet-multiclass TS scaled-logits"
+  "imagenet-multiclass VS logits" "imagenet-multiclass VS scaled-logits"
+)
+
+read -r BENCHMARK CALIBRATOR VARIANT <<< "${JOBS[$SLURM_ARRAY_TASK_ID]}"
+
+cd $HOME/CalArena
+
+python ablation_logits/run_ablation.py --benchmark "$BENCHMARK" --calibrator "$CALIBRATOR" --variant "$VARIANT"

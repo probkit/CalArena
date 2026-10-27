@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "calarena"
+version = "1.0.0"
+description = "CalArena: A Large-Scale Post-Hoc Calibration Benchmark"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [
+    { name = "Eugène Berta" },
+    { name = "David Holzmüller" },
+    { name = "Francis Bach" },
+    { name = "Michael I. Jordan" },
+]
+dependencies = [
+    # All benchmarked calibrators. The "dirichletcal" extra (Dirichlet calibration)
+    # requires python >= 3.12.
+    "probmetrics[extra,dirichletcal]>=1.3.0",
+    "h5py>=3.0",
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "torch>=2.0",
+    "tqdm",
+]
+
+[project.optional-dependencies]
+# Results analysis and paper figures (utils.py, make_figures.py,
+# ablation_logits/make_figures.py)
+analysis = [
+    "matplotlib>=3.7",
+    "scikit-posthocs>=0.9",  # Statistical analysis and CD diagrams
+    "arena-rank>=0.1.1",     # Elo scores
+    "tabulate",              # Markdown tables
+]
+# Generating the benchmarks from the original data sources. TabRepo and TabArena must
+# additionally be installed from their repositories, see the README.
+generate = [
+    "safetensors",
+    "scipy",
+]
+
+[tool.setuptools]
+py-modules = ["run_benchmark", "utils", "custom_calibrators"]

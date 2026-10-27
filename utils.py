@@ -2,6 +2,7 @@ import itertools
 import numpy as np
 import pandas as pd
 import scikit_posthocs as sp
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.lines as mlines
 
@@ -11,7 +12,9 @@ from arena_rank.utils.data_utils import PairDataset
 from arena_rank.models.bradley_terry import BradleyTerry
 
 
-def load_benchmark_results(benchmark_name: str, methods: list) -> pd.DataFrame:
+def load_benchmark_results(
+    benchmark_name: str, methods: list, results_dir: str = "results"
+) -> pd.DataFrame:
     allowed_benchmarks = {
         "tabarena-binary",
         "tabrepo-binary",
@@ -34,7 +37,7 @@ def load_benchmark_results(benchmark_name: str, methods: list) -> pd.DataFrame:
         raise ValueError("The 'methods' list cannot be empty.")
 
     modality = benchmark_name_.split("-")[-1]
-    base_path = f"results/{benchmark_name_}"
+    base_path = f"{results_dir}/{benchmark_name_}"
 
     merge_cols = ["dataset", "model", "cal_size", "test_size"]
     if modality != "binary":
@@ -333,6 +336,24 @@ def compute_absolute_improvements(
 ### Plotting ###
 
 
+def save_and_show(savefile=None):
+    """
+    Saves the current figure to savefile (a path or a list of paths, e.g. to save
+    both a PDF and a PNG version), shows it and closes it.
+    """
+    if savefile is not None:
+        savefiles = savefile if isinstance(savefile, (list, tuple)) else [savefile]
+        for file in savefiles:
+            # No creation date in PDFs, so that unchanged figures are byte-identical
+            metadata = {"CreationDate": None} if str(file).endswith(".pdf") else None
+            plt.savefig(file, bbox_inches="tight", metadata=metadata)
+
+    # Nothing to show with a non-interactive backend (e.g. make_figures.py)
+    if matplotlib.get_backend().lower() != "agg":
+        plt.show()
+    plt.close()
+
+
 def plot_leaderboard(
     leaderboard,
     title=None,
@@ -353,7 +374,9 @@ def plot_leaderboard(
     elif color == "orange":
         c = "#cc5a14"
     else:
-        print("[!] Unknwon color, choose from ['blue', 'green', 'red', 'orange']")
+        raise ValueError(
+            f"Unknown color '{color}', choose from ['blue', 'green', 'red', 'orange']"
+        )
 
     # Separate the Base-model from the rest of the table
     has_base = "Base-model" in leaderboard.index
@@ -371,6 +394,9 @@ def plot_leaderboard(
             plot_leaderboard["upper"] - plot_leaderboard["score"],
         ]
     )
+    # Bootstrap bounds can differ from the point estimate by floating point errors
+    # when a method's score is constant across experiments
+    errors = np.clip(errors, 0, None)
 
     fig, ax = plt.subplots(figsize=figsize)
 
@@ -431,14 +457,11 @@ def plot_leaderboard(
     if title is not None:
         ax.set_title(title)
 
-    plt.xticks(rotation=xticks_rotation, ha="right")
+    plt.xticks(rotation=xticks_rotation, ha="right" if xticks_rotation else "center")
 
     plt.tight_layout()
 
-    if savefile is not None:
-        plt.savefig(savefile, bbox_inches="tight")
-
-    plt.show()
+    save_and_show(savefile)
 
 
 def plot_grouped_leaderboards(
@@ -506,7 +529,9 @@ def plot_grouped_leaderboards(
     elif color == "orange":
         colors = ["#cc5a14", "#e8955c", "#fae0ce"]
     else:
-        print("[!] Unknwon color, choose from ['blue', 'green', 'red', 'orange']")
+        raise ValueError(
+            f"Unknown color '{color}', choose from ['blue', 'green', 'red', 'orange']"
+        )
 
     for i, (b_name, table) in enumerate(processed_tables.items()):
         color = colors[i % len(colors)]
@@ -533,7 +558,7 @@ def plot_grouped_leaderboards(
                 err_lower.append(0)
                 err_upper.append(0)
 
-        errors = np.array([err_lower, err_upper])
+        errors = np.clip(np.array([err_lower, err_upper]), 0, None)
 
         # Plot the grouped bars
         ax.bar(
@@ -584,7 +609,11 @@ def plot_grouped_leaderboards(
 
     # Set x-ticks exactly at the center of the groups
     ax.set_xticks(x_positions)
-    ax.set_xticklabels(sorted_methods, rotation=xticks_rotation, ha="right")
+    ax.set_xticklabels(
+        sorted_methods,
+        rotation=xticks_rotation,
+        ha="right" if xticks_rotation else "center",
+    )
 
     # Legend handling: Add the base-model indicator if applicable
     handles, labels = ax.get_legend_handles_labels()
@@ -608,10 +637,7 @@ def plot_grouped_leaderboards(
 
     plt.tight_layout()
 
-    if savefile is not None:
-        plt.savefig(savefile, bbox_inches="tight")
-
-    plt.show()
+    save_and_show(savefile)
 
 
 def plot_cd_diagram(
@@ -658,7 +684,4 @@ def plot_cd_diagram(
 
     plt.tight_layout()
 
-    if savefile is not None:
-        plt.savefig(savefile, bbox_inches="tight")
-
-    plt.show()
+    save_and_show(savefile)
